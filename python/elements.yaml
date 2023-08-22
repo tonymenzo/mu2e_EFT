@@ -1,0 +1,261 @@
+# Information about isotopes for mu2e.py
+# JS is the ground state spin
+# TTMS is the
+# delta is the mass defect in MeV from Nuclear Wallet Cards
+# masses will be calculated when loaded.
+# Entries from Table XV (note that precision here is higher than table??):
+# Ebind:  Muon binding energy given Z (why isn't this calculated)
+# Qeff:   momentum transfer to electron adjusted for coulomb interaction to get WF
+#         (why isn't this calculated from eqn 12?)
+# Zeff:   Adjustment to Z for muon wave function (eqn 26).
+Carbon: # 1
+    symbol: "C"  # periodic table symbol
+    Z: 6         # nuclear charge, number of protons
+    Ebind:  0.099974
+    Qeff:   108.398
+    Zeff:   5.7030
+    fgAvg:  -0.015
+    isotopes:    # cataloged isotopes
+        12:
+            JS: 0              # Ground state spin
+            TTMS: [0,0]
+            abundance: 0.9893  # fractional abundance
+            delta: 0.0         # mass defect
+            interactions: [ "ck" ]
+        13:
+            JS: 0.5
+            TTMS: [0.5,-0.5]
+            abundance: 0.0107
+            delta: 3.125
+            interactions: [ "ck" ]
+Oxygen: # 2
+    symbol: "O"
+    Z: 8
+    Ebind:  0.177455
+    Qeff:   109.158
+    Zeff:   7.4210
+    fgAvg: -0.019
+    isotopes:
+        16:
+            JS: 0
+            TTMS: [0,0]
+            abundance: 0.99757
+            delta: -4.737
+            interactions: [ "bw", "bw", "bw", "4hw" ]  # FIXME:  Is this right?
+        18:
+            JS: 0
+            TTMS: [1,-1]
+            abundance: 0.00205
+            delta: -0.783
+            interactions: [ "bw", "usda", "usdb", "2hw" ]
+Fluorine: # 3
+    symbol: "F"
+    Z: 9
+    Ebind:  0.224170
+    Qeff:   109.438
+    Zeff:   8.2298
+    fgAvg:  -0.021
+    isotopes:
+        19:
+            JS: 0.5
+            TTMS: [0.5, -0.5]
+            abundance: 1.0
+            delta: -1.487
+            interactions: [ "bw", "usda", "usdb" ]
+Sodium: # 4
+    symbol: "Na"
+    Z: 11
+    Ebind: 0.3333684
+    Qeff:  110.247
+    Zeff:  9.8547
+    fgAvg: -0.025
+    isotopes:
+        23:
+            JS: 1.5
+            TTMS: [0.5, -0.5]
+            abundance: 1.0
+            delta: -9.530
+            interactions: [ "bw", "usda", "usdb" ]
+Aluminum: # 5
+    symbol: "Al"
+    Z: 13
+    Ebind: 0.462953
+    Qeff:  110.809
+    Zeff:  11.3086
+    fgAvg: -0.029
+    isotopes: 
+        27:
+            JS: 2.5
+            TTMS: [0.5, -0.5]
+            abundance: 1.0
+            delta: -17.197
+            interactions: [ "bw", "usda", "usdb" ]
+Silicon: # 6
+    symbol: "Si"
+    Z: 14
+    Ebind:  0.534646
+    Qeff:   111.030
+    Zeff:   12.0009
+    fgAvg: -0.031
+    isotopes:
+        28:
+            JS: 0 
+            TTMS: [0,0]
+            abundance: 0.92223
+            delta: -21.493
+            interactions: [ "bw", "usda", "usdb" ]
+        29:
+            JS: 0.5
+            TTMS: [0.5,-0.5]
+            abundance: 0.04685
+            delta: -21.895
+            interactions: [ "bw", "usda", "usdb" ]
+        30:
+            JS: 0
+            TTMS: [1,-1]
+            abundance: 0.03092
+            delta: -24.433
+            interactions: [ "bw", "usda", "usdb" ]
+Sulfur: # 7
+    symbol: "S"
+    alias: "Sulphur"  # British English
+    Z: 16
+    Ebind:  0.692428
+    Qeff:   111.56
+    Zeff:   13.1839
+    fgAvg:  -0.035
+    isotopes:
+        32:
+            JS: 0
+            TTMS: [0,0]
+            abundance: 0.9499
+            delta: -26.015
+            interactions: [ "bw", "usda", "usdb" ]
+        33:
+            JS: 1.5
+            TTMS: [0.5, -0.5]
+            abundance: 0.0075
+            delta: -26.586
+            interactions: [ "bw", "usda", "usdb" ]
+        34:
+            JS: 0
+            TTMS: [1,-1]
+            abundance: 0.0425
+            delta: -29.931
+            interactions: [ "bw", "usda", "usdb" ]
+Calcium: # 8
+    symbol: "Ca"
+    Z: 20
+    Ebind:  1.058480
+    Qeff:   112.279
+    Zeff:   15.6916
+    fgAvg: -0.042
+    isotopes:
+        40:
+            JS: 0
+            TTMS: [0,0]
+            abundance: 0.9694
+            delta: -34.846
+            interactions: [ "kbp", "kbp", "kbp" ]   #   FIXME:  Is this right?
+        42:
+            JS: 0
+            TTMS: [1,-1]
+            abundance: 0.00647
+            delta: -38.547
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+        44:
+            JS: 0
+            TTMS: [2,-2]
+            abundance: 0.0209
+            delta: -41.468
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+Titanium: # 9
+    symbol: "Ti"
+    Z: 22
+    Ebind:  1.261486
+    Qeff:   112.429
+    Zeff:   16.6562
+    fgAvg: -0.045
+    isotopes: 
+        46:
+            JS: 0
+            TTMS: [1,-1]
+            abundance: 0.0825
+            delta: -44.128
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+        47:
+            JS: 2.5
+            TTMS: [1.5,-1.5]
+            abundance: 0.0744
+            delta: -44.937
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+        48:
+            JS: 0
+            TTMS: [2,-2]
+            abundance: 0.7372
+            delta: -48.493
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+        49:
+            JS: 3.5
+            TTMS: [2.5,-2.5]
+            abundance: 0.0541
+            delta: -48.564
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+        50:
+            JS: 0
+            TTMS: [3,-3]
+            abundance: 0.0518
+            delta: -51.432
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+Iron:
+    symbol: "Fe"
+    Z: 26
+    Ebind:  1.718157
+    Qeff:   113.157
+    Zeff:   18.6028
+    fgAvg: -0.051
+    isotopes: 
+        54:
+            JS: 0
+            TTMS: [1,-1]
+            abundance: 0.05845
+            delta: -56.255
+            interactions: [ "kbp", "kbp", "kbp" ]  # FIXME:  Is this right?
+        56:
+            JS: 0
+            TTMS: [2,-2]
+            abundance: 0.91754
+            delta: -60.607
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+        57:
+            JS: 0.5
+            TTMS: [2.5,-2.5]
+            abundance: 0.02119
+            delta: -60.182
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+        58:
+            JS: 0
+            TTMS: [3,-3]
+            abundance: 0.00282
+            delta: -62.155
+            interactions: [ "kbp", "GX1A", "KB3G" ]
+Copper:
+    symbol: "Cu"
+    Z: 29
+    Ebind:  2.088443
+    Qeff:   113.503
+    Zeff:   19.8563  # correction from Evan, old unconverged value 19.8206
+    fgAvg: -0.055
+    isotopes: 
+        63:
+            JS: 1.5
+            TTMS: [2.5,-2.5]
+            abundance: 0.6915
+            delta: -65.580
+            interactions: [ "GCN2850", "jj44b", "JUN45" ]
+        65:
+            JS: 1.5 # correction from Evan
+            TTMS: [3.5,-3.5]
+            abundance: 0.3085
+            delta: -67.264
+            interactions: [ "GCN2850", "jj44b", "JUN45" ]
