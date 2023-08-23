@@ -251,7 +251,7 @@ class WC_3_flavor:
             'd2n':  + (1. / mu) * self.coeff_dict['C67u'] * FPun + (1. / md) * self.coeff_dict['C67d'] * FPdn + (1. / ms) * self.coeff_dict['C67s'] * FPsn\
                     + self.coeff_dict['C73'] * FGtilden + self.coeff_dict['C77'] * Fgammatilden\
                     + 1j * ((me - mmu) / (2 * mn)) * (self.coeff_dict['C63u'] * FPpun + self.coeff_dict['C63d'] * FPpdn + self.coeff_dict['C63s'] * FPpsn)\
-                    + 4 * (me - mmu) * (self.coeff_dict['C714u'] * FT3un + self.coeff_dict['C714d'] * FT3dn + self.coeff_dict['C714s'] * FT3sn)\
+                    + 4 * (me - mmu) * ((1 / mu) * self.coeff_dict['C714u'] * FT3un + (1 / md) * self.coeff_dict['C714d'] * FT3dn + (1 / ms) * self.coeff_dict['C714s'] * FT3sn)\
                     - 1j * ((mmu**2 - me**2) / (2 * mn)) * (self.coeff_dict['C711u'] * FPpun + self.coeff_dict['C711d'] * FPpdn + self.coeff_dict['C711s'] * FPpsn),
 
             'd3p':  + (1. / mu) * self.coeff_dict['C66u'] * FSup + (1. / md) * self.coeff_dict['C66d'] * FSdp + (1. / ms) * self.coeff_dict['C66s'] * FSsp\
@@ -281,10 +281,10 @@ class WC_3_flavor:
                     - ((np.dot(q,q)) / (2 * mn)) * ((1 / mu) * self.coeff_dict['C713u'] * (FT1un - 4 * FT2un) + (1 / md) * self.coeff_dict['C713d'] * (FT1dn - 4 * FT2dn) + (1 / ms) * self.coeff_dict['C713s'] * (FT1sn - 4 * FT2sn)),
 
             'd6p':  - (1./2.) * (self.coeff_dict['C61u'] * F2up + self.coeff_dict['C61d'] * F2dp + self.coeff_dict['C61s'] * F2sp)\
-                    + (1./2.) * (mmu + me) * (self.coeff_dict['C79u'] * F2up + self.coeff_dict['C79d'] * F2dp + self.coeff_dict['C79s'] * F2sp),
+                    - (1./2.) * (mmu + me) * (self.coeff_dict['C79u'] * F2up + self.coeff_dict['C79d'] * F2dp + self.coeff_dict['C79s'] * F2sp),
 
             'd6n':  - (1./2.) * (self.coeff_dict['C61u'] * F2un + self.coeff_dict['C61d'] * F2dn + self.coeff_dict['C61s'] * F2sn)\
-                    + (1./2.) * (mmu + me) * (self.coeff_dict['C79u'] * F2un + self.coeff_dict['C79d'] * F2dn + self.coeff_dict['C79s'] * F2sn),
+                    - (1./2.) * (mmu + me) * (self.coeff_dict['C79u'] * F2un + self.coeff_dict['C79d'] * F2dn + self.coeff_dict['C79s'] * F2sn),
 
             'd7p':  + self.coeff_dict['C63u'] * FAup + self.coeff_dict['C63d'] * FAdp + self.coeff_dict['C63s'] * FAsp\
                     + (mmu + me) * (self.coeff_dict['C711u'] * FAup + self.coeff_dict['C711d'] * FAdp + self.coeff_dict['C711s'] * FAsp)\
@@ -305,10 +305,10 @@ class WC_3_flavor:
             'd9n':  - (alpha / np.pi) * self.coeff_dict['C51'] * (mL / np.dot(q,q)) * (qu * F1un + qd * F1dn + qs * F1sn)\
                     - mL * (self.coeff_dict['C79u'] * F1un + self.coeff_dict['C79d'] * F1dn + self.coeff_dict['C79s'] * F1sn),
 
-            'd10p': + (alpha / np.pi) * self.coeff_dict['C51'] * (mL / np.dot(q,q)) * (qu * F2up + qd * F2dp + qs * F2sp)\
+            'd10p': + (alpha / (2 * np.pi)) * self.coeff_dict['C51'] * (mL / np.dot(q,q)) * (qu * F2up + qd * F2dp + qs * F2sp)\
                     + (mL / 2.) * (self.coeff_dict['C79u'] * F2up + self.coeff_dict['C79d'] * F2dp + self.coeff_dict['C79s'] * F2sp),
 
-            'd10n': + (alpha / np.pi) * self.coeff_dict['C51'] * (mL / np.dot(q,q)) * (qu * F2un + qd * F2dn + qs * F2sn)\
+            'd10n': + (alpha / (2 * np.pi)) * self.coeff_dict['C51'] * (mL / np.dot(q,q)) * (qu * F2un + qd * F2dn + qs * F2sn)\
                     + (mL / 2.) * (self.coeff_dict['C79u'] * F2un + self.coeff_dict['C79d'] * F2dn + self.coeff_dict['C79s'] * F2sn),
 
             'd11p': - mL * (self.coeff_dict['C711u'] * FAup + self.coeff_dict['C711d'] * FAdp + self.coeff_dict['C711s'] * FAsp),
@@ -396,11 +396,11 @@ class WC_3_flavor:
 
             'd29p': - mL * ((1 / mu) * self.coeff_dict['C713u'] * (FT0up - (np.dot(q,q) / mp**2) * FT2up) + (1 / md) * self.coeff_dict['C713d'] * (FT0dp - (np.dot(q,q) / mp**2) * FT2dp) + (1 / ms) * self.coeff_dict['C713s'] * (FT0sp - (np.dot(q,q) / mp**2) * FT2sp)),
 
-            'd29n': - mL * ((1 / mu) * self.coeff_dict['C713u'] * (FT0un - (np.dot(q,q) / mp**2) * FT2un) + (1 / md) * self.coeff_dict['C713d'] * (FT0dn - (np.dot(q,q) / mp**2) * FT2dn) + (1 / ms) * self.coeff_dict['C713s'] * (FT0sn - (np.dot(q,q) / mp**2) * FT2sn)),
+            'd29n': - mL * ((1 / mu) * self.coeff_dict['C713u'] * (FT0un - (np.dot(q,q) / mn**2) * FT2un) + (1 / md) * self.coeff_dict['C713d'] * (FT0dn - (np.dot(q,q) / mn**2) * FT2dn) + (1 / ms) * self.coeff_dict['C713s'] * (FT0sn - (np.dot(q,q) / mn**2) * FT2sn)),
 
             'd30p': - mL * ((1 / mu) * self.coeff_dict['C715u'] * (FT0up - (np.dot(q,q) / mp**2) * FT2up) + (1 / md) * self.coeff_dict['C715d'] * (FT0dp - (np.dot(q,q) / mp**2) * FT2dp) + (1 / ms) * self.coeff_dict['C715s'] * (FT0sp - (np.dot(q,q) / mp**2) * FT2sp)),
 
-            'd30n': - mL * ((1 / mu) * self.coeff_dict['C715u'] * (FT0un - (np.dot(q,q) / mp**2) * FT2un) + (1 / md) * self.coeff_dict['C715d'] * (FT0dn - (np.dot(q,q) / mp**2) * FT2dn) + (1 / ms) * self.coeff_dict['C715s'] * (FT0sn - (np.dot(q,q) / mp**2) * FT2sn)),
+            'd30n': - mL * ((1 / mu) * self.coeff_dict['C715u'] * (FT0un - (np.dot(q,q) / mn**2) * FT2un) + (1 / md) * self.coeff_dict['C715d'] * (FT0dn - (np.dot(q,q) / mn**2) * FT2dn) + (1 / ms) * self.coeff_dict['C715s'] * (FT0sn - (np.dot(q,q) / mn**2) * FT2sn)),
 
             'd31p': - (1j / 4.) * mL * ((1 / mu) * self.coeff_dict['C716u'] * FT0up + (1 / md) * self.coeff_dict['C716d'] * FT0dp + (1 / ms) * self.coeff_dict['C716s'] * FT0sp),
 
