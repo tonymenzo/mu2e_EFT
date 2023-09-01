@@ -1,0 +1,49 @@
+#
+# Example Data file for running analysis
+#
+Element:  "Cu"        # Can use UI element spelling Sulfur or it's symbol S (also Britsh sp)
+# Isotope:  0         # 0 says to average
+Isotope:  63          # 63 picks a specific Isotope of Cu
+Interaction: GCN2850  # bw is short for "Brown-Wildenthal", which also works
+oscb:     0           # in fm. Omit or set to 0 to calc from average A (Abar) over isotopes
+MCR:      0           # omit or 0 for dflt, otherwise muon capture rate in sec^-1
+                      # using:  b=Sqrt[41.467/(45*Abar^(-1/3) -25*Abar^(-2/3))]
+                      # Automatically fixed for some interactions.
+isochar:   proton     # [1, 0]/isoscalar:   isoscalar(1)
+                      # [0,1]/isovector:    isovector  tau_3
+                      # [0.5, 0.5]/proton   proton
+                      # [0.5,-0.5]/neutron  neutron
+# plots: ['vcrm', 'alsr', 'atsr', 'ssd', 'vtmr', 'vlr', 'vter']
+# plots: all
+plots: none
+                      # vcrm: Vector Charge (or S.I.) Response (M)
+                      # alsr: Axial Longitudinal Spin Response (Sigma'') 
+                      # alsr: Axial Transverse Spin Response (Sigma')
+                      # ssd:  Standard Spin-Dependent (or S.D.) Response
+                      # vtmr: Vector Transverse Magnetic Response (Delta)
+                      # vlr:  Vector Longitudinal Response (Phi'')
+                      # vter: Vector Transverse Electric Response (PhiT')
+                      # all:  All of the above
+                      # none: None of the above
+
+mL: 0.1               # 0 is non-relativistic
+muonlower: True       # enables muon lower components if mL > 0
+# cs holds the non-relativistic LECs, which can be complex
+# Entries are [index, isoscalarpart, isovectorpart]
+# index goes from 1..16
+# omitted entries are zero
+# cs: [   
+#            [1, 0.2, 0.2],
+#            [2, 0.0, 1.0],
+#            [5, 0.3, 0.0],
+#            [16, 0.0, 1.0]
+#     ]
+# ds holds the relativistic di coefficients, which are real
+# Entries are [index, isoscalarpart, isovectorpart]
+# omitted entries are zero
+# index goes from 1..20
+ds: [   
+           [2, 0.1, 0.2],
+           [7, 0.0, 0.1],
+           [20, 0.16, 0.0]
+    ]
