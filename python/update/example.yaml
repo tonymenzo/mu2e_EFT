@@ -15,8 +15,7 @@ isochar:   proton     # [1, 0]/isoscalar:   isoscalar(1)
                       # [0.5,-0.5]/neutron  neutron
 # plots: ['vcrm', 'alsr', 'atsr', 'ssd', 'vtmr', 'vlr', 'vter']
 # plots: all
-# plots: none
-plots: all
+plots: none
                       # vcrm: Vector Charge (or S.I.) Response (M)
                       # alsr: Axial Longitudinal Spin Response (Sigma'') 
                       # alsr: Axial Transverse Spin Response (Sigma')

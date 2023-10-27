@@ -3,7 +3,7 @@
 # Ken McElvain   16June2022
 #
 # Update for lower components 28Nov2022
-# Relativistic version
+# Left off at fgAvgA
 #
 # Need to write Mathematica code to generate python test code.
 #
@@ -29,13 +29,6 @@ import py3nj  # angular momentum brackets
 import scipy.special # hypergeometric and bessel functions
 import yaml
 
-<<<<<<< HEAD
-"""
-=======
-# get dir containing this file so we can find elements.yaml
-mu2edir=os.path.dirname(os.path.abspath(__file__))
-
->>>>>>> refs/remotes/origin/main
 # Set up arguments
 parser = argparse.ArgumentParser(prog='mu2e', description='Analyse Mu->e transitions')
 parser.add_argument("-test", action="store_true", help="Run internal tests")
@@ -45,17 +38,13 @@ elasticenvname = "MU2E_ELASTIC"
 if elasticenvname in os.environ:
     elasticdirdflt = os.environ[elasticenvname]
 else:
-<<<<<<< HEAD
-    elasticdirdflt = "~/Code/mu2e/mu2e_UV_IR/Elastic"
-=======
     elasticdirdflt = "../../Elastic"
->>>>>>> refs/remotes/origin/main
 parser.add_argument("-edir", action="store", type=str, default=elasticdirdflt,
     help="Directory with elastic scattering density matrices")
 parser.add_argument("-wl", action="store_true", help="Create *.wl mathematica files for input yaml files")
 parser.add_argument('path', nargs='*', help='Paths to analysis input files')
 args = parser.parse_args()
-"""
+
 # We will use floating point numbers for half integer
 # values.  The Mathematica equivalent uses rationals.
 # This code relies on the exact representation of integer/2.0
@@ -505,6 +494,14 @@ def BesselElementPlus(y, oscp, osc, lcap):
             BesselFactor2(y, oscp, osc, lcap) *
             BesselFactor4A(y, oscp, osc, lcap))
 
+def testBesselElementPlus():
+    z = BesselElementPlus(1.5, [3, 1], [2, 2], 2)
+    zc = 0.09937871333435762
+    check(abs(z-zc) < 1e-8, f"BesselElementPlus(1.5, [3,1], [2,2], 2) = {z}, expecting {zc}")
+    z = BesselElementPlus(1.75, [4, 1], [3, 0], 1)
+    zc = -0.05094060299913639
+    check(abs(z-zc) < 1e-8, f"BesselElementPlus(1.75, [4,1], [3,0], 1) = {z}, expecting {zc}")
+
 # REL
 # define lower-component Bessel function matrix elements (See Eq. D.16, D26, and D.27 in Evan's thesis)
 # y = (q b / 2)^2,  which is positive unless q can be imaginary
@@ -517,6 +514,16 @@ def IMat(L, m, y):
     b = scipy.special.gamma((L + m + 1.0)/2.0) / scipy.special.gamma(L + 3.0/2.0)
     c = scipy.special.hyp1f1(1 + (L - m)/2.0, L+3.0/2.0, y)
     return a * b * c
+
+def testIMat():
+    L,m,y=[2, 1, 0.1]
+    z = IMat(L, m, y)
+    zc = 0.012596221369350572
+    check(abs(z-zc) < 1e-8, f"IMat({L},{m},{y}) = {z}, expecting {zc}")
+    L,m,y=[1, 1, 0.15]
+    z = IMat(L, m, y)
+    zc = 0.10464519385061087
+    check(abs(z-zc) < 1e-8, f"IMat({L},{m},{y}) = {z}, expecting {zc}")
 
 # REL
 def BesselElementLower1(y, oscp, osc, lcap):
@@ -533,12 +540,27 @@ def BesselElementLower1(y, oscp, osc, lcap):
             tot += tx * ty * tz
     return a * tot
 
+def testBesselElementLower1():
+    y=0.05
+    oscp = [1, 2]
+    osc  = [1, 2]
+    lcap = 2
+    z = BesselElementLower1(y, oscp, osc, lcap)
+    zc = 0.050834915097926384
+    check(abs(z-zc) < 1e-8, f"BesselElementLower1({y},{oscp},{osc},{lcap}) = {z}, expecting {zc}")
+    y = 0.2
+    oscp = [2, 1]
+    osc = [1, 2]
+    lcap = 2
+    z = BesselElementLower1(y, oscp, osc, lcap)
+    zc = -0.03905573587524187
+    check(abs(z-zc) < 1e-8, f"BesselElementLower1({y},{oscp},{osc},{lcap}) = {z}, expecting {zc}")
+
 # REL
 def BesselElementLower2(y, oscp, osc, lcap):
     np,lp=oscp
     n,l=osc
-    a = (1.0 / (2.0 * math.sqrt(y)))
-    a *= math.sqrt(2.0 * scipy.special.gamma(np) * 2 * scipy.special.gamma(n) / (scipy.special.gamma(np + lp + 0.5) * scipy.special.gamma(n + l + 0.5)))
+    a = math.sqrt(2.0 * scipy.special.gamma(np) * 2.0 * scipy.special.gamma(n) / (scipy.special.gamma(np + lp + 0.5) * scipy.special.gamma(n + l + 0.5)))
     tot = 0.0
     for i in range(np):
         for j in range(n):
@@ -548,13 +570,21 @@ def BesselElementLower2(y, oscp, osc, lcap):
             tot += tx * ty * tz
     return a * tot
 
-def testBesselElementPlus():
-    z = BesselElementPlus(1.5, [3, 1], [2, 2], 2)
-    zc = 0.09937871333435762
-    check(abs(z-zc) < 1e-8, f"BesselElementPlus(1.5, [3,1], [2,2], 2) = {z}, expecting {zc}")
-    z = BesselElementPlus(1.75, [4, 1], [3, 0], 1)
-    zc = -0.05094060299913639
-    check(abs(z-zc) < 1e-8, f"BesselElementPlus(1.75, [4,1], [3,0], 1) = {z}, expecting {zc}")
+def testBesselElementLower2():
+    y=0.05
+    oscp = [1, 2]
+    osc  = [1, 2]
+    lcap = 2
+    z = BesselElementLower2(y, oscp, osc, lcap)
+    zc = 0.09585079486550925
+    check(abs(z-zc) < 1e-8, f"BesselElementLower2({y},{oscp},{osc},{lcap}) = {z}, expecting {zc}")
+    y = 0.2
+    oscp = [2, 1]
+    osc = [1, 2]
+    lcap = 2
+    z = BesselElementLower2(y, oscp, osc, lcap)
+    zc = -0.04296130946276599
+    check(abs(z-zc) < 1e-8, f"BesselElementLower2({y},{oscp},{osc},{lcap}) = {z}, expecting {zc}")
 
 def testBessel():
     testBesselFactor1()
@@ -572,6 +602,11 @@ def testBessel():
     testSummand4A()
     testBesselFactor4A()
     testBesselElementPlus()
+    # relativistic functions in section
+    print("**Relativistic functions")
+    testIMat()
+    testBesselElementLower1()
+    testBesselElementLower2()
 
 ##################################################
 # Operator support
@@ -1224,6 +1259,16 @@ def PhiJ(y, Oscp, Osc, jcap):
 def PhiTJ(y, Oscp, Osc, jcap):
     return PhiJ(y, Oscp, Osc, jcap) - SigmaPJ(y, Oscp, Osc, jcap) * 0.5
 
+def testPhiTJ():
+    y=0.125
+    Oscp = (2, 5./2)
+    Osc = (2, 1/2)
+    jcap = 3
+    z = PhiTJ(y, Oscp, Osc, jcap)
+    zc = 0.018555471962443736
+    check(abs(z - zc) < 1e-8, f"PhiTJ({y},{Oscp}, {Osc}, {jcap}) = {z}, expecting {zc}")
+    
+
 # REL
 # Lower Component Operators: normal parity
 # M_J^{(1)} : (Eq. D20 in thesis)
@@ -1254,6 +1299,15 @@ def M1J(y, njp, nj, jcap):
     else:
         return 0.0
 
+def testM1J():
+    y = 0.11
+    njp = [4, 2.5] # 
+    nj = [6, 2.5]
+    jcap = 2
+    z = M1J(y, njp, nj, jcap)
+    zc = 0.02926571544344857
+    check(abs(z - zc) < 1e-8, f"M1J({y}, {njp}, {nj}, {jcap}) = {z}, expecting {zc}")
+
 # REL
 # M_J^{(2)}: (Eq. D21 in thesis)
 def m2jelement(y, oscp, osc, jcap):
@@ -1262,7 +1316,7 @@ def m2jelement(y, oscp, osc, jcap):
     a = math.pow(-1.0, 0.5 + j + jcap)
     b = math.sqrt( JNorm(j) * JNorm(jp) * JNorm(l) * JNorm(lp) * JNorm(jcap) / (4*math.pi))
     c = ThreeJ( (lp, 0), (jcap, 0), (l, 0)) * SixJ((lp, jp, 0.5), (j, l, jcap))
-    d = BesselElementLower1(y, (np,lp), (n, l), jcap)
+    d = BesselElementLower2(y, (np,lp), (n, l), jcap)
     return a * b * c * d
 
 # REL
@@ -1280,6 +1334,15 @@ def M2J(y, njp, nj, jcap):
     else:
         return 0.0
 
+def testM2J():
+    y = 0.11
+    njp = [4, 2.5] # 
+    nj = [6, 2.5]
+    jcap = 4
+    z = M2J(y, njp, nj, jcap)
+    zc = -0.005961938215573617
+    check(abs(z - zc) < 1e-8, f"M2J({y}, {njp}, {nj}, {jcap}) = {z}, expecting {zc}")
+
 # Lower Component Operators: abnormal parity
 # \Sigma_J^{\prime (0)} : (Eq. D.23 in thesis)
 # REL
@@ -1287,7 +1350,7 @@ def MJLSigma0(y, Oscp, Osc, jcap, lcap):
     np,lp,jp=Oscp
     n,l,j=Osc
     a = math.pow(-1, lp)
-    b = math.sqrt(JNorm(j)*JNorm(jp)*JNorm(l)*JNorm(lp)*JNorm(jcap)*JNorm(lcap)/ (4 * math.pi))
+    b = math.sqrt(6*JNorm(j)*JNorm(jp)*JNorm(l)*JNorm(lp)*JNorm(jcap)*JNorm(lcap)/ (4 * math.pi))
     c = ThreeJ((lp, 0), (lcap, 0), (l, 0)) * NineJSymbol( (lp, l, lcap), (0.5, 0.5, 1), (jp, j, jcap) )
     d = BesselElement(y, (np, lp), (n, l), jcap)
     return a * b * c * d
@@ -1316,6 +1379,14 @@ def SigmaP0J(y, njp, nj, jcap):
         return SigmaPrime0JE(y, njp, nj, jcap)
     else:
         return 0.0
+def testSigmaP0J():
+    ncapp,jp=[4, 5/2]
+    ncap,j=[6,5/2]
+    jcap = 1
+    y = 0.21
+    z = SigmaP0J(y, [ncapp, jp], [ncap, j], jcap)
+    zc = -0.00488124719490728
+    check(abs(z - zc) < 1e-8, f"SigmaP0J({y}, {[ncapp, jp]}, {[ncap,j]}, {jcap}) = {z}, expecting {zc}")
 
 # \Sigma_J^{\prime\prime (0)}:
 # REL
@@ -1344,6 +1415,16 @@ def SigmaPP0J(y, njp, nj, jcap):
         return SigmaPrimePrime0JE(y, njp, nj, jcap)
     else:
         return 0.0
+
+def testSigmaPP0J():
+    ncapp,jp=[4, 5/2]
+    ncap,j=[6,5/2]
+    jcap = 1
+    y = 0.21
+    z = SigmaPP0J(y, [ncapp, jp], [ncap, j], jcap)
+    zc = -0.0011505209973889173
+    check(abs(z - zc) < 1e-8, f"SigmaPP0J({y}, {[ncapp, jp]}, {[ncap,j]}, {jcap}) = {z}, expecting {zc}")
+    
     
 # \Sigma_J^{\prime(2)}: (Eq. D.25 in thesis)
 # REL
@@ -1384,6 +1465,16 @@ def SigmaP2J(y, njp, nj, jcap):
     else:
         return 0.0
 
+def testSigmaP2J():
+    ncapp,jp=[4, 5/2]
+    ncap,j=[6,5/2]
+    jcap = 3
+    y = 0.21
+    z = SigmaP2J(y, [ncapp, jp], [ncap, j], jcap)
+    zc = -0.020321215793226613
+    check(abs(z - zc) < 1e-8, f"SigmaP2J({y}, {[ncapp, jp]}, {[ncap,j]}, {jcap}) = {z}, expecting {zc}")
+    
+
 # \Sigma_J^{\prime\prime(2)}: (Eq. ?? in thesis)
 # REL
 def SigmaPrimePrime2(y, Oscp, Osc, jcap):
@@ -1412,15 +1503,14 @@ def SigmaPP2J(y, njp, nj, jcap):
     else:
         return 0.0
 
-def testPhiTJ():
-    y=0.125
-    Oscp = (2, 5./2)
-    Osc = (2, 1/2)
-    jcap = 3
-    z = PhiTJ(y, Oscp, Osc, jcap)
-    zc = 0.018555471962443736
-    check(abs(z - zc) < 1e-8, f"PhiTJ({y},{Oscp}, {Osc}, {jcap}) = {z}, expecting {zc}")
-    
+def testSigmaPP2J():
+    ncapp,jp=[4, 3/2]
+    ncap,j=[6,3/2]
+    jcap = 1
+    y = 0.21
+    z = SigmaPP2J(y, [ncapp, jp], [ncap, j], jcap)
+    zc = -0.013727242988820046
+    check(abs(z - zc) < 1e-8, f"SigmaPP2J({y}, {[ncapp, jp]}, {[ncap,j]}, {jcap}) = {z}, expecting {zc}")
 
 def testOperatorSupport():
     print("")
@@ -1440,6 +1530,13 @@ def testOperatorSupport():
     testSigmaPPJ()
     testOmegaTJ()
     testPhiTJ()
+    print("**Relativistic functions")
+    testM1J()
+    testM2J()
+    testSigmaP0J()
+    testSigmaPP0J()
+    testSigmaP2J()
+    testSigmaPP2J()
     print("")
 
 ########################################
@@ -1499,7 +1596,7 @@ def testNineJ():
 
 def loadElements():
     global elements 
-    with open(mu2edir + "/elements.yaml", "r") as f:
+    with open("elements.yaml", "r") as f:
         elements = yaml.safe_load(f)
     for name, eht in elements.items():
         Z = eht['Z']
@@ -1603,18 +1700,18 @@ def getelement(data):
         ename = data['Element']
     else:
         raise ValueError("Missing Element tag in input")
-    #if not ename in elements:
+    if not ename in elements:
         # might be short name, scan
-        #for e, edata in elements.items():
-            #if edata['symbol'] == ename or (('alias' in edata) and (edata['alias'] == ename)):
-                #ename = e # convert
-                #break
-        #if not ename in elements:
-            #raise ValueError(f"unknown element name or symbol {ename}")
-        #data['Element'] = ename
+        for e, edata in elements.items():
+            if edata['symbol'] == ename or (('alias' in edata) and (edata['alias'] == ename)):
+                ename = e # convert
+                break
+        if not ename in elements:
+            raise ValueError(f"unknown element name or symbol {ename}")
+        data['Element'] = ename
     return ename
 
-def doabundance(data, print_details = False):
+def doabundance(data):
     ename = data['Element']
     edata = elements[ename]
     # get number of keys in isotope dict - the number of isotopes
@@ -1631,8 +1728,7 @@ def doabundance(data, print_details = False):
         for a, idata in itab.items():
             idx = idata['idx'] # get index into AbNorm
             AbNorm[idx] = idata['abundance'] / atot
-            if print_details:
-                print(f"Target is {a}{ename} at normalized abundance {AbNorm[idx]:.6f}")
+            print(f"Target is {a}{ename} at normalized abundance {AbNorm[idx]:.6f}")
     else:
         print(f"Selecting A={x}")
         if not x in itab:
@@ -1640,8 +1736,7 @@ def doabundance(data, print_details = False):
         idata = itab[x]
         idx = idata['idx'] # get index into AbNorm
         AbNorm[idx] = 1.0
-        if print_details:
-            print(f"Target is {x}{ename} at abundance 1.0")
+        print(f"Target is {x}{ename} at abundance 1.0")
     data['AbNorm'] = AbNorm
     # Also calculate Abar the average A, weighted by abundance AbNorm
     Abar = 0.0
@@ -1649,12 +1744,7 @@ def doabundance(data, print_details = False):
         idx = idata['idx']
         Abar += AbNorm[idx] * a
     data['Abar'] = Abar
-<<<<<<< HEAD
-    if print_details:
-        print(f"  Average A = {Abar:0.6f}")
-=======
     print(f"  Average A = {Abar:0.8f}")
->>>>>>> refs/remotes/origin/main
 
 def getinteraction(data):
     ename = data['Element']
@@ -1681,7 +1771,7 @@ def getinteraction(data):
     data['Interaction'] = Interactions[interaction][0] # Use table to pick case to match files.
     data['InteractionReport'] = Interactions[interaction][1] # shift to lower case
 
-def getoscb(data, print_details = False):
+def getoscb(data):
     ename = data['Element']
     Abar = data['Abar']
     enamel = ename.lower()
@@ -1694,13 +1784,11 @@ def getoscb(data, print_details = False):
     else:
         if ('oscb' in data) and (data['oscb'] > 0.0):
             b = data['oscb']
-            if print_details:
-                print(f"  Using user supplied oscillator length scale b={b} fm")
+            print(f"  Using user supplied oscillator length scale b={b} fm")
         else:
             b = math.sqrt(41.467 / (45.0 * Abar**(-1.0/3.0) - 25.0 * Abar**(-2.0/3.0)))
-            if print_details:
-                print(f"  {ename} oscillator length scale set to {b:.6f} fm")
-                print("     *Override by setting oscb value in input data to value > 0")
+            print(f"  {ename} oscillator length scale set to {b:.6f} fm")
+            print("     *Override by setting oscb value in input data to value > 0")
     data['oscb'] = b
 
 #
@@ -1708,7 +1796,7 @@ def getoscb(data, print_details = False):
 # Here we compute the average mass according to the fractional
 # abundances AbNorm.
 #
-def getmasses(data, print_details = False):
+def getmasses(data):
     ename = data['Element']
     AbNorm = data['AbNorm']
     edata = elements[ename]
@@ -1718,18 +1806,13 @@ def getmasses(data, print_details = False):
         idx = idata['idx']
         Mbar += AbNorm[idx] * idata['mass']
     data['Mbar'] = Mbar
-<<<<<<< HEAD
-    if print_details:
-        print(f"  Average Nuclear Mass = {Mbar:0.6f}")
-=======
     print(f"  Average Nuclear Mass = {Mbar:0.8f}")
->>>>>>> refs/remotes/origin/main
 
 #
 # Computing random energy, momentum, charge, radii used
 # in formulas and saving in dict data
 #
-def computeThings(data, print_details = False):
+def computeThings(data):
     ename = data['Element']
     Mbar = data['Mbar']
     edata = elements[ename]
@@ -1753,18 +1836,10 @@ def computeThings(data, print_details = False):
     Zeff = edata['Zeff']
     data['Zeff'] = Zeff
     data['RZ2'] = (Zeff * alpha * mu)**3 / math.pi
-<<<<<<< HEAD
-    if print_details:
-        print(f"  Z = {Z}, Zeff = {Zeff}, RZ2 = {data['RZ2']}")
-        print(f"  Momentum transfer to electron = {qval} MeV   qeff = {data['qeff']} MeV")
-        print(f"  muon binding energy = {Ebind}")
-        print(f"  Ratio of average muon Dirac components <f>/<g> = {data['fgAvg']}")
-=======
     print(f"  Z = {Z}, Zeff = {Zeff:0.8f}, RZ2 = {data['RZ2']:0.8f}")
     print(f"  Momentum transfer to electron = {qval:0.8f} MeV   qeff = {data['qeff']} MeV")
     print(f"  muon binding energy = {Ebind:0.8f}")
     print(f"  Ratio of average muon Dirac components <f>/<g> = {data['fgAvg']:0.8f}")
->>>>>>> refs/remotes/origin/main
     
 # Matrix element files (one body) are grouped into sets
 # organized by Final state angular momentum JF and isospin TF,  
@@ -1825,11 +1900,10 @@ def testFM(data):
 # This is a check of the matrix elements we read.
 # The J0=0, T0=0 result should give A
 # The J0=0, T0=1 result apparently gives Z-N
-def evalsumrules(data, print_details = False):
-    if print_details:
-        print("# Sum rules for 1 body density matrices")
-        print("#  J0=0, T0=0 result should give a charge of A (nucleon count)")
-        print("#  J0=0, T0=1 result should give a charge of (Z - N)")
+def evalsumrules(data):
+    print("# Sum rules for 1 body density matrices")
+    print("#  J0=0, T0=0 result should give a charge of A (nucleon count)")
+    print("#  J0=0, T0=1 result should give a charge of (Z - N)")
     ename = data['Element']
     symbol = data['symbol']
     AbNorm = data['AbNorm']
@@ -1839,19 +1913,17 @@ def evalsumrules(data, print_details = False):
         idata = itab[a] # get isotope data
         idx = idata['idx']
         if AbNorm[idx] > 0.0:
-            if print_details:
-                print(f"  Evaluating sum rules for {a}{symbol}, Z={edata['Z']}, N={idata['N']}")
+            print(f"  Evaluating sum rules for {a}{symbol}, Z={edata['Z']}, N={idata['N']}")
             for meset in data['isotopeme'][a]:
                 if meset.J0 == 0:
                     Valu = FM(data, a, meset, 0.00000001)
                     Valu *= math.sqrt(4.0 * math.pi / (2.0 * meset.JI + 1))
-                    if print_details:
-                        print(f"    J0 = {meset.J0}, T0 = {meset.T0}, Charge = {Valu:0.2f}")
+                    print(f"    J0 = {meset.J0}, T0 = {meset.T0}, Charge = {Valu:0.2f}")
 
 #
 # Read interaction files
 # We verify that the matrix elements are in the ground state of the isotope
-def readint(data, print_details = False):
+def readint(data):
     ename = data['Element']
     edata = elements[ename]
     intstr = data['Interaction']
@@ -1872,8 +1944,7 @@ def readint(data, print_details = False):
                 if not intfile.exists():
                     raise ValueError(f"Can't locate elastic results {erstr}")
             
-        if print_details:
-            print(intfile)
+        print(intfile)
         curmeset = None
         mesets = []
         with intfile.open() as f:
@@ -1910,11 +1981,10 @@ def readint(data, print_details = False):
                     ValueError(f"Expecting end of meset indicator, got {tokens[0]}")
             else:
                 raise ValueError(f"Bad Format interaction file {intfile.as_posix()}")
-        if print_details:
-            for mes in mesets:
-                print(f"meset: JF={mes.JF}, TF={mes.TF}, JI={mes.JI}, TI={mes.TI}, J0={mes.J0}, T0={mes.T0}")
-                for me in mes.rows:
-                    print(f"  merow: bra={me.bra}, ket={me.ket}, val={me.val}")
+        for mes in mesets:
+            print(f"meset: JF={mes.JF}, TF={mes.TF}, JI={mes.JI}, TI={mes.TI}, J0={mes.J0}, T0={mes.T0}")
+            for me in mes.rows:
+                print(f"  merow: bra={me.bra}, ket={me.ket}, val={me.val}")
         data['isotopeme'][a] = mesets
 
 #
@@ -2006,10 +2076,7 @@ def ResOp(data, y, Op):
     tot = 0.0
     for a, idata in itab.items(): # going through isotopes
         idx = idata['idx'] # index to AbNorm
-        ab = AbNorm[idx]
-        if ab == 0.0:
-            continue
-        ab = ab * 4 * math.pi
+        ab = AbNorm[idx] * 4 * math.pi
         mslist = data['isotopeme'][a]  # list of matrix element sets
         # note: double loop because we are squaring and if the
         # first Op piece and second Op piece can reach the same state we have to
@@ -2250,7 +2317,7 @@ def Response2(data, y, cs, bs, FbOp, FkOp, ROp):
 
 
 
-# Note:  no use in qm in this case
+# Note:  no use of qm in this case
 def WM(data, qm, y, cs):
     return Response(data, y, cs, FM, FM, RM)
 
@@ -2483,19 +2550,19 @@ def plotspindep(data):
     npts = 20
     print(f"isochar={isochar}")
     if ('all' in plots) or ('vcrm' in plots):
-        plotOp(data, "vcrm", "Vector Charge (or S.I.) Response (M)", ResM)
+        plotOp(data, "ResM", "Vector Charge (or S.I.) Response (M)", ResM)
     if ('all' in plots) or ('alsr' in plots):
-        plotOp(data, "alsr", "Axial Longitudinal Spin Response (Sigma'')" , ResSigmaPP)
+        plotOp(data, "ResSigmaPP", "Axial Longitudinal Spin Response (Sigma'')" , ResSigmaPP)
     if ('all' in plots) or ('atsr' in plots):
-        plotOp(data, "atsr", "Axial Transverse Spin Response (Sigma')" , ResSigmaP)
+        plotOp(data, "ResSigmaP", "Axial Transverse Spin Response (Sigma')" , ResSigmaP)
     if ('all' in plots) or ('ssd' in plots):
-        plotOp(data, "ssd", "Standard Spin-Dependent (or S.D.) Response" , ResSD)
+        plotOp(data, "ResSD", "Standard Spin-Dependent (or S.D.) Response" , ResSD)
     if ('all' in plots) or ('vtmr' in plots):
-        plotOp(data, "vtmr", "Vector transverse magnetic response (Delta)" , ResDelta)
+        plotOp(data, "ResDelta", "Vector transverse magnetic response (Delta)" , ResDelta)
     if ('all' in plots) or ('vlr' in plots):
-        plotOp(data, "vlr", "Vector Longitudinal Response (Phi'')" , ResPhiPP)
+        plotOp(data, "ResPhiPP", "Vector Longitudinal Response (Phi'')" , ResPhiPP)
     if ('all' in plots) or ('vter' in plots):
-        plotOp(data, "vter", "Vector transverse electric response (PhiT')" , ResPhiTP)
+        plotOp(data, "ResPhiTP", "Vector transverse electric response (PhiT')" , ResPhiTP)
 
 #
 # duplicate report in Mathematica code
@@ -2522,12 +2589,8 @@ def report_ds(ds):
 #
 def expandcsdsbs(data):
     cs = np.zeros((17, 2), dtype=np.complex128) 
-<<<<<<< HEAD
-    ds = np.zeros((21, 2), dtype=np.complex128)
-=======
     # ds = np.zeros((21, 2))
     ds = np.zeros((33, 2))
->>>>>>> refs/remotes/origin/main
     bs = np.zeros((17, 2), dtype=np.complex128)
     if 'cs' in data:
         for ce in data['cs']:
@@ -2539,7 +2602,7 @@ def expandcsdsbs(data):
         data['origcs'] = data['cs'].copy()
         data['cs'] = cs
     else:
-        data['cs'] = cs
+        data['cs'] = cs;
         print("No non-relativistic LECs (cs entry) in input data")
     if 'ds' in data:
         for de in data['ds']:
@@ -2570,7 +2633,7 @@ def expandcsdsbs(data):
         data['bs'] = bs # Do not load from yaml, gen from ds
 
 # Correct cs coefficients for muon momentum and leptonic scale mL
-def relativistic_cs(data, print_details = False):
+def relativistic_cs(data):
     I = 0+1.0j
     cs = data['cs']
     ds = data['ds']
@@ -2657,10 +2720,6 @@ def relativistic_cs(data, print_details = False):
     cs[6,1]=cs[6,1]-I*ds[19,1] * qval/mL
     cs[6,0]=cs[6,0]+ ds[20,0] * qval**2/(mN * mL)
     cs[6,1]=cs[6,1]+ ds[20,1] * qval**2/(mN * mL)
-<<<<<<< HEAD
-    if print_details:
-        print("Corrected cs values")
-=======
     # New Entries 28Aug2023
     cs[1,0]=cs[1,0]- ds[21,0] * qval/mN - ds[22,0] * qval/mN + 4*ds[23,0] * qval/mN + ds[29,0] * qval**2/(2*mL*mN)
     cs[1,1]=cs[1,1]- ds[21,1] * qval/mN - ds[22,1] * qval/mN + 4*ds[23,1] * qval/mN + ds[29,1] * qval**2/(2*mL*mN)
@@ -2684,7 +2743,6 @@ def relativistic_cs(data, print_details = False):
     cs[15,1]=cs[15,1] - I*ds[30,1] * qval/mL + 4*ds[32,1] * qval/mL
 
     print("Corrected cs values")
->>>>>>> refs/remotes/origin/main
     for i in range(1, 17):
         s = cs[i,0]
         if s.imag == 0.0:
@@ -2692,60 +2750,15 @@ def relativistic_cs(data, print_details = False):
         v = cs[i,1]
         if v.imag == 0.0:
             v = v.real
-        if print_details:
-            print(f"   i {i}  [{s}, {v}]")
+        print(f"   i {i}  [{s}, {v}]")
 
 # corrections to lower components
-def relativistic_bs(data, print_details = False):
+def relativistic_bs(data):
     I = 0+1.0j
     bs = data['bs'] # modifies in place
     ds = data['ds']
     qval = data['qval']
     mL = data['mL']
-<<<<<<< HEAD
-    bs[2,0]  = bs[2,0]   + I*ds[1,0]
-    bs[2,1]  = bs[2,1]   + I*ds[1,1]
-    bs[3,0]  = bs[3,0]   - ds[1,0]
-    bs[3,1]  = bs[3,1]   - ds[1,1]
-    bs[7,0]  = bs[7,0]   + I*ds[3,0]
-    bs[7,1]  = bs[7,1]   + I*ds[3,1]
-    bs[2,0]  = bs[2,0]   - I*ds[5,0]
-    bs[2,1]  = bs[2,1]   - I*ds[5,1]
-    bs[3,0]  = bs[3,0]   + ds[5,0]
-    bs[3,1]  = bs[3,1]   + ds[5,1]
-    bs[8,0]  = bs[8,0]   - ds[7,0]
-    bs[8,1]  = bs[8,1]   - ds[7,1]
-    bs[12,0] = bs[12,0] - I*ds[7,0]
-    bs[12,1] = bs[12,1] - I*ds[7,1]
-    bs[2,0]  = bs[2,0]   - (I*qval/mL) * ds[9,0]
-    bs[2,1]  = bs[2,1]   - (I*qval/mL) * ds[9,1]
-    bs[3,0]  = bs[3,0]   + (qval/mL) * ds[9,0]
-    bs[3,1]  = bs[3,1]   + (qval/mL) * ds[9,1]
-    bs[8,0]  = bs[8,0]   + (qval/mL) * ds[11,0]
-    bs[8,1]  = bs[8,1]   + (qval/mL) * ds[11,1]
-    bs[12,0] = bs[12,0] + (I*qval/mL) * ds[11,0]
-    bs[12,1] = bs[12,1] + (I*qval/mL) * ds[11,1]
-    bs[15,0] = bs[15,0] + (I*qval/mL) * ds[11,0]
-    bs[15,1] = bs[15,1] + (I*qval/mL) * ds[11,1]
-    bs[16,0] = bs[16,0] + (qval/mL) * ds[11,0]
-    bs[16,1] = bs[16,1] + (qval/mL) * ds[11,1]
-    bs[7,0]  = bs[7,0]   + ds[13,0]
-    bs[7,1]  = bs[7,1]   + ds[13,1]
-    bs[5,0]  = bs[5,0]   + ds[15,0]
-    bs[5,1]  = bs[5,1]   + ds[15,1]
-    bs[13,0] = bs[13,0] + I*ds[15,0]
-    bs[13,1] = bs[13,1] + I*ds[15,1]
-    bs[14,0] = bs[14,0] + I*ds[15,0]
-    bs[14,1] = bs[14,1] + I*ds[15,1]
-    bs[7,0]  = bs[7,0]   + (I*qval/mL)*ds[17,0]
-    bs[7,1]  = bs[7,1]   + (I*qval/mL)*ds[17,1]
-    bs[5,0]  = bs[5,0]   - (I*qval/mL)*ds[19,0]
-    bs[5,1]  = bs[5,1]   - (I*qval/mL)*ds[19,1]
-    bs[13,0] = bs[13,0] + (qval/mL)*ds[19,0]
-    bs[13,1] = bs[13,1] + (qval/mL)*ds[19,1]
-    if print_details:
-        print("Corrected bs (lower comp) values")
-=======
     bs[2,0] += I*ds[1,0] - I*ds[5,0] - I*ds[9,0]*qval/mL
     bs[2,1] += I*ds[1,1] - I*ds[5,1] - I*ds[9,1]*qval/mL
     bs[3,0] += -ds[1,0] + ds[5,0] + ds[9,0]*qval/mL
@@ -2767,7 +2780,6 @@ def relativistic_bs(data, print_details = False):
     bs[16,0] += ds[11,0]*qval/mL + ds[30,0]*qval/mL + 4*I*ds[32,0]*qval/mL
     bs[16,1] += ds[11,1]*qval/mL + ds[30,1]*qval/mL + 4*I*ds[32,1]*qval/mL
     print("Corrected bs (lower comp) values")
->>>>>>> refs/remotes/origin/main
     for i in range(1, 17):
         s = bs[i,0]
         if s.imag == 0.0:
@@ -2775,8 +2787,7 @@ def relativistic_bs(data, print_details = False):
         v = bs[i,1]
         if v.imag == 0.0:
             v = v.real
-        if print_details:
-            print(f"   i {i}  [{s}, {v}]")
+        print(f"   i {i}  [{s}, {v}]")
 
 
 def compute_decay_rate(data):
@@ -2798,10 +2809,6 @@ def compute_decay_rate(data):
     if abs(DecayRate.imag) > 1e-6:
         print(f" Warning:  Decay rate has imaginary component! {DecayRate}")
     DecayRate = DecayRate.real
-<<<<<<< HEAD
-    #print(f"  Decay rate = {DecayRate:.6e}/sec")
-=======
->>>>>>> refs/remotes/origin/main
     # save decay rate
     data['DecayRate'] = DecayRate
 
@@ -2858,28 +2865,10 @@ def to_mfloat(d):
         return s
     return f"{s}*10^{e}"
 
-def writecoeflist(f, dlist):
-    first = True
-    f.write("{")
-    for idx in range(len(dlist)):
-        c = dlist[idx]
-        if c[0] != 0.0 or c[1] != 0.0:
-            print(f"{idx}: {c}")
-            c0 = to_mfloat(c[0])
-            c1 = to_mfloat(c[1])
-            if first:
-                f.write("\n      {")
-                first = False
-            else:
-                f.write(",\n      {")
-            f.write(f"{idx}, {c0}, {c1}")
-            f.write("}")
-    f.write("}")
-
 # Helper for writing mathematica script
 def writecoef(f, w, dlist):
     f.write(f"{w}")
-    f.write("[{")
+    f.write("[{");
     first = True
     for idx in range(len(dlist)):
         c = dlist[idx]
@@ -2898,147 +2887,41 @@ def writecoef(f, w, dlist):
 
 def to_mathematica(pathstr, data):
     print(f"Converting {pathstr} to mathematica script")
-    origp = pathlib.Path(pathstr)
-    p = origp.with_suffix(".wl")
+    p = pathlib.Path(pathstr).with_suffix(".wl")
     ps = p.as_posix()
     print(f"Writing mathematica file {ps}")
     with p.open('w') as f:
-        f.write(f"(*\n")
-        f.write(f" * Mathematica testing script converted from python .yaml file\n")
-        f.write(f" *\n")
-        f.write(f" * Required Setup:\n")
-        f.write(f" *   On Mac add /Applications/Mathematica.app/Contents/MacOS to your path to find MathKernel\n")
-        f.write(f" *   Set environment variable MU2E_ELASTIC to the Elastic density matrix directory\n")
-        f.write(f" *   Set environment variable MU2E_MATH to the directory containing mu2elib.wl\n")
-        f.write(f" *\n")
-        f.write(f" * Run with:   MathKernel -script {ps}\n")
-        f.write(f" *)\n")
-        f.write(f"nbdir = Environment[\"MU2E_MATH\"]\n")
-        f.write("Get[nbdir <> \"/mu2elib.wl\"];\n")
-        bf = origp.stem
-        f.write(f"(* Capture data as Mathematica association *)\n")
-        f.write(f"data = <|\n");
-        f.write(f"   \"basefile\"    -> \"{bf}\", (* used to name plot files *)\n")
-        f.write(f"   \"isotope\"     -> \"{data['Isotope']}{data['symbol']}\",\n")
-        f.write(f"   \"interaction\" -> \"{data['Interaction']}\",\n")
-        mls = to_mfloat(data['oscb'])
-        f.write(f"   \"oscb\"        -> {mls}, (* harmonic osc length scale *)\n")
-        q = '"'
-        if 'plots' in data:
-            if data['plots'] == "all":
-                f.write("   \"plots\"   ->  \"all\",\n")
-            elif data['plots'] == "none":
-                f.write("   \"plots\"   ->  \"none\",\n")
-            else:
-                f.write("   \"plots\"   -> {")
-                first = True
-                for s in data['plots']:
-                    if not first:
-                        f.write(", ")
-                    first = False
-                    f.write(f"{q}{s}{q}")
-                f.write("},\n")
-        else:
-            f.write("   \"plots\"   ->  \"none\",\n")
+        f.write(f"(* Mathematica testing script converted from python .yaml file *)\n")
+        f.write(f"(* load mu2elib.wl - how to find? *)\n")
+        f.write(f"setElement[\"{data['Isotope']}{data['symbol']}\"];\n")
+        f.write(f"setInteraction[\"{data['Interaction']}\"];\n")
+        oscbs = to_mfloat(data['oscb'])
+        f.write(f"(* Set oscillator length scale *)\n")
+        f.write(f"setB[{oscbs}];\n") 
+        f.write(f"(* Read in interactions for selected isotopes *)\n")
+        f.write(f"readDM[];\n")
+        f.write(f"(* Test interaction consistancy *)\n");
+        f.write(f"calcSumRules[];\n") 
+        f.write(f"(* Constructing coefficients *)\n")
+        f.write(f"clearCDBs[];\n")
         mls = to_mfloat(data['mL'])
-        f.write(f"   \"mL\"          -> {mls}, (* leptonic scale *)\n")
+        f.write(f"setML[{mls}];\n")
         if data['muonlower']:
             com = "(* Enable muon lower components *)"
             mls = '1'
         else:
             com = "(* Ignore muon lower components *)"
             mls = '0'
-        f.write(f"   \"muonlower\"   -> {mls} {com},\n")
-        f.write(f"   \"mcr\"         -> {data['MCR']} (* muon cap rate *),\n")
+        f.write(f"setiLower[{mls}]; {com}\n")
         if data['mL'] > 0:
-            f.write("   (* relativistic coef *)\n")
-            f.write("   \"ds\" -> ")
-            writecoeflist(f, data['ds'])
+            writecoef(f, "setDS", data['ds'])
         else:
-            f.write("   (* nonrelativistic coef *)\n")
-            f.write("   \"cs\" -> ")
-            writecoeflist(f, data['cs'])
-        f.write(f",\n")
-        f.write(f"   \"dummy\"       -> 0 (* avoid trailing comma *)\n")
-        f.write(f"|>;\n");
-        f.write(f"\n")
-        f.write(f"(* Set stem of yaml test case file, used for plot file names *)\n")
-        f.write("setBaseFile[data[\"basefile\"]];\n")
-        # f.write(f"setElement[\"{data['Isotope']}{data['symbol']}\"];\n")
-        f.write("setElement[data[\"isotope\"]];\n")
-        # f.write(f"setInteraction[\"{data['Interaction']}\"];\n")
-        f.write("setInteraction[data[\"interaction\"]];\n")
-        # oscbs = to_mfloat(data['oscb'])
-        f.write("(* Set harmonic oscillator length scale *)\n")
-        f.write("setB[data[\"oscb\"]];\n") 
-        f.write(f"(* Read in interactions for selected isotopes *)\n")
-        f.write(f"readDM[];\n")
-        f.write(f"(* Test interaction consistancy *)\n")
-        f.write(f"calcSumRules[];\n") 
-
-        if True:
-            # new way
-            f.write("plotResponseD[data];\n")
-        else:
-            if 'plots' in data and data['plots'] != "none":
-                f.write(f"\n")
-                plots = data['plots']
-                f.write(f"\n(* Response Functions Plots*)\n")
-                isochar = data['isochar']
-                f.write("isod = {")
-                f.write(f"{isochar[0]:0.3f}, {isochar[1]:0.3f}")
-                f.write("};\n")
-                f.write("defineResponseFunctions[Ncode, isod];\n")
-                if plots == "all":
-                    f.write("plotResponses[False];\n")
-                else: # must be list of plot names 
-                    for p in plots:
-                        if p == "vcrm":
-                            f.write("plotResponseVcrm[False];\n")
-                        elif p == "alsr":
-                            f.write("plotResponseAlsr[False];\n")
-                        elif p == "atsr":
-                            f.write("plotResponseAtsr[False];\n")
-                        elif p == "ssd":
-                            f.write("plotResponseSsd[False];\n")
-                        elif p == "vtmr":
-                            f.write("plotResponseVtmr[False];\n")
-                        elif p == "vlr":
-                            f.write("plotResponseVlr[False];\n")
-                        elif p == "vter":
-                            f.write("plotResponseVter[False];\n")
-                f.write("(* Done with Response Function Plots *)\n")
-        
-        f.write(f"(* Constructing coefficients *)\n")
-        f.write(f"clearCDBs[];\n")
-        if False:
-            mls = to_mfloat(data['mL'])
-            # f.write(f"setML[{mls}];\n")
-            f.write(f"setML[data[\"mL\"]];\n")
-            if data['muonlower']:
-                com = "(* Enable muon lower components *)"
-                mls = '1'
-            else:
-                com = "(* Ignore muon lower components *)"
-                mls = '0'
-            # f.write(f"setiLower[{mls}]; {com}\n")
-            f.write("setiLower[data[\"muonlower\"]]; {com}\n")
-        else:
-            f.write("setML[data[\"mL\"]];\n")
-            f.write("setiLower[data[\"muonlower\"]];\n")
-        if data['mL'] > 0:
-            # writecoef(f, "setDS", data['ds'])
-            f.write("setDS[data[\"ds\"]];\n")
-            f.write("updateCS[]; (* from ds coefficients *)\n")
-            # if data['muonlower']:
-            #     f.write("updateBS[];\n")
-            f.write("If[data[\"muonlower\"] != 0, updateBS[]];\n")
-        else:
-            # writecoef(f, "setCS", data['cs'])
-            f.write("setCS[data[\"cs\"]];\n")
-        f.write("calcDecayRate[];\n")
-        # f.write(f"setMCR[{data['MCR']}];\n")
-        f.write("setMCR[data[\"mcr\"]]; (* 0 will yield default *)\n")
+            writecoef(f, "setCS", data['cs'])
+        f.write("updateCS[];\n");
+        if data['muonlower']:
+            f.write("updateBS[];\n");
+        f.write("calcDecayRate[];\n");
+        f.write(f"setMCR[{data['MCR']}];\n");
         f.write("BranchingRatio = Decayrate / MCR;\n")
         f.write('Print["  Branching ratio relative to ordinary muon capture = ", BranchingRatio];\n')
         f.write("Quit[];\n")
@@ -3109,108 +2992,8 @@ def main():
         return
     for p in args.path:
         print(f"Processing {p}")
-<<<<<<< HEAD
-        process(p)
-
-# For MuonConverter
-def compute_decay_rate(nr_model_path, elastic_path = './Elastic/'):
-    """
-    Function for computing decay rate
-    """
-    # Open and read yaml file contianing model info
-    with open(nr_model_path, "r") as f:
-        data = yaml.safe_load(f)
-
-    # Load in element list
-    with open("elements.yaml", "r") as f:
-        global elements
-        elements = yaml.safe_load(f)
-    for name, eht in elements.items():
-        Z = eht['Z']
-        isotopeht = eht['isotopes']
-        idx = 0
-        for A, pht in isotopeht.items(): 
-            pht['N'] = A - Z
-            pht['mass'] = auMeV * A + pht['delta']
-            pht['idx'] = idx
-            idx = idx + 1
-
-    # Get the name of the element
-    if 'Element' in data:
-        ename = data['Element']
-    else:
-        raise ValueError("Missing Element tag in input")
-    if not ename in elements:
-        # Correct for abbreviated name
-        for e, edata in elements.items():
-            if edata['symbol'] == ename or (('alias' in edata) and (edata['alias'] == ename)):
-                ename = e # convert
-                break
-        if not ename in elements:
-            raise ValueError(f"unknown element name or symbol {ename}")
-        data['Element'] = ename
-=======
         data = process(p)
         if args.wl:
             to_mathematica(p, data)
->>>>>>> refs/remotes/origin/main
         
-    # Set symbol name
-    data['symbol'] = elements[ename]['symbol']
-        
-    # Set elastic directory
-    edir = pathlib.Path(elastic_path).expanduser()
-    if not edir.is_dir():
-        raise ValueError(f"Supplied Elastic density matrix directory {args.edir} is not a directory")
-    global elasticDir
-    elasticDir = edir
-
-    # Compute
-    doabundance(data)
-    getinteraction(data)
-    getoscb(data)
-    getmasses(data)
-    computeThings(data)
-    pdata = copy.deepcopy(data)  # save before interaction added
-    readint(data)
-    evalsumrules(data)
-    expandcsdsbs(data)
-    
-    if ('plots' in data) and ('isochar' in data):
-        plotspindep(data)
-        
-    # Check for mL value
-    if 'mL' in data and data['mL'] > 0.0:
-        if not ('ds' in data):
-            raise ValueError("mL={mL} is > 0, but no ds coeffients are specified")
-        relativistic_cs(data) # relativistic corrections
-        if 'bs' in data:
-            relativistic_bs(data) # lower component corrections
-    else:
-        data['mL'] = 0.0
-
-    b = data['oscb'] / hc
-    qval = data['qval']
-    qeff = data['qeff']
-    qm = qeff / Nmass  # also nM
-    y = (qeff * b / 2.0)**2
-    RZ2 = data['RZ2']
-    Mbar = data['Mbar']
-    cs = data['cs']
-    bs = data['bs']
-    
-    DecayRate = 1 / (mv**4  * 2 * math.pi)
-    DecayRate *= RZ2 * qeff**2 / (1 + qval / Mbar)
-    h = Heff(data, qm, y, cs, bs)
-    DecayRate *= h
-    DecayRate /= hbar
-    if abs(DecayRate.imag) > 1e-6:
-        print(f" Warning:  Decay rate has imaginary component! {DecayRate}")
-    DecayRate = DecayRate.real
-
-    return DecayRate 
-    
-    
-
-if __name__ == '__main__':
-    main()
+main()
