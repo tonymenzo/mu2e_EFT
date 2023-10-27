@@ -24,7 +24,7 @@ import py3nj  # angular momentum brackets
 import scipy.special # hypergeometric and bessel functions
 import yaml
 
-"""
+
 # Set up arguments
 parser = argparse.ArgumentParser(prog='mu2e', description='Analyse Mu->e transitions')
 parser.add_argument("-test", action="store_true", help="Run internal tests")
@@ -34,12 +34,12 @@ elasticenvname = "MU2E_ELASTIC"
 if elasticenvname in os.environ:
     elasticdirdflt = os.environ[elasticenvname]
 else:
-    elasticdirdflt = "~/Code/mu2e/mu2e_UV_IR/Elastic"
+    elasticdirdflt = "./Elastic/"
 parser.add_argument("-edir", action="store", type=str, default=elasticdirdflt,
     help="Directory with elastic scattering density matrices")
 parser.add_argument('path', nargs='*', help='Paths to analysis input files')
 args = parser.parse_args()
-"""
+
 # We will use floating point numbers for half integer
 # values.  The Mathematica equivalent uses rationals.
 # This code relies on the exact representation of integer/2.0
@@ -1569,15 +1569,15 @@ def getelement(data):
         ename = data['Element']
     else:
         raise ValueError("Missing Element tag in input")
-    #if not ename in elements:
+    if not ename in elements:
         # might be short name, scan
-        #for e, edata in elements.items():
-            #if edata['symbol'] == ename or (('alias' in edata) and (edata['alias'] == ename)):
-                #ename = e # convert
-                #break
-        #if not ename in elements:
-            #raise ValueError(f"unknown element name or symbol {ename}")
-        #data['Element'] = ename
+        for e, edata in elements.items():
+            if edata['symbol'] == ename or (('alias' in edata) and (edata['alias'] == ename)):
+                ename = e # convert
+                break
+        if not ename in elements:
+            raise ValueError(f"unknown element name or symbol {ename}")
+        data['Element'] = ename
     return ename
 
 def doabundance(data, print_details = False):
@@ -1814,8 +1814,7 @@ def readint(data, print_details = False):
                 if not intfile.exists():
                     raise ValueError(f"Can't locate elastic results {erstr}")
             
-        if print_details:
-            print(intfile)
+        print(intfile)
         curmeset = None
         mesets = []
         with intfile.open() as f:
@@ -2659,7 +2658,7 @@ def report_decay_rate(data):
     if abs(DecayRate.imag) > 1e-6:
         print(f" Warning:  Decay rate has imaginary component! {DecayRate}")
     DecayRate = DecayRate.real
-    #print(f"  Decay rate = {DecayRate:.6e}/sec")
+    print(f"  Decay rate = {DecayRate:.6e}/sec")
     # save decay rate
     data['DecayRate'] = DecayRate
     if 'ExpectedDecayRate' in data:
